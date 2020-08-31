@@ -31,24 +31,23 @@ public class ActivityUnitDAO {
 	}
 	
 	public ActivityUnit findById(int id) throws SQLException{
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		
-		try(Connection conn = ConnectionDAO.getInstance().getConnection()){
+		try(Connection conn = ConnectionDAO.getInstance().getConnection(); 
+				PreparedStatement stmt = conn.prepareStatement("SELECT * FROM activityunit WHERE idActivityUnit=?")){
 			
-			stmt = conn.prepareStatement("SELECT * FROM activityunit WHERE idActivityUnit=?");
-		
 			stmt.setInt(1, id);
-			
-			rs = stmt.executeQuery();
-			
-			if(rs.next()){
-				return this.loadObject(rs);
-			}else{
-				return null;
+			try(ResultSet rs = stmt.executeQuery()) {
+				if(rs.next()){
+					return this.loadObject(rs);
+				}else{
+					return null;
+				}
+			} catch (SQLException e) {
+				throw new SQLException(e);
 			}
-		}finally{
-			ConnectionDAO.closeStatement(stmt, rs);
+			
+		} catch (SQLException e) {
+			throw new SQLException(e);
 		}
 	}
 	
@@ -56,9 +55,11 @@ public class ActivityUnitDAO {
 		boolean insert = (unit.getIdActivityUnit() == 0);
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
+		String query = "";
 		
 		try(Connection conn = ConnectionDAO.getInstance().getConnection()){
 
+			
 			if(insert){
 				stmt = conn.prepareStatement("INSERT INTO activityunit(description, fillAmount, amountDescription) VALUES(?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 			}else{
