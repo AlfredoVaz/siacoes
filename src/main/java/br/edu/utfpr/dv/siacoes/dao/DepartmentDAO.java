@@ -9,10 +9,12 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
+
 import br.edu.utfpr.dv.siacoes.log.UpdateEvent;
 import br.edu.utfpr.dv.siacoes.model.Department;
 
-public class DepartmentDAO {
+public class DepartmentDAO extends AbstractDAO<Department>{
 
 	public Department findById(int id) throws SQLException{
 		PreparedStatement stmt = null;
@@ -133,7 +135,7 @@ public class DepartmentDAO {
 		}
 	}
 
-	private Department loadObject(ResultSet rs) throws SQLException{
+	public Department loadObject(ResultSet rs) throws SQLException{
 		Department department = new Department();
 		
 		department.setIdDepartment(rs.getInt("idDepartment"));
@@ -147,6 +149,11 @@ public class DepartmentDAO {
 		department.setInitials(rs.getString("initials"));
 		
 		return department;
+	}
+
+	@Override
+	public List<Department> listAll() throws SQLException {
+		throw new NotImplementedException("method not overridden");
 	}
 	
 }
